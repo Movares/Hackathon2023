@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -105,14 +106,93 @@ namespace Hackathon2023
                 matchingTypesDict[type] = baseObjectsProject1.Where(x => x.Value.GetType().Name == type && intersect.Contains(x.Key)).Count();
             }
 
+            List<tBaseObject> filteredModel1 = baseObjectsProject1.Where(x => except1.Contains(x.Key)).Select(x => x.Value).ToList();
+            List<tBaseObject> filteredModel2 = baseObjectsProject2.Where(x => except2.Contains(x.Key)).Select(x => x.Value).ToList();
+
+            CheckAttributes(filteredModel1, filteredModel2);
             //Assert
             Assert.IsNotNull(intersect);
         }
 
-        public void CheckAttributes(Dictionary<string, tBaseObject> IMXModel1, Dictionary<string, tBaseObject> IMXModel2)
+        /// <summary>
+        /// Converts a String to Coordinate.
+        /// </summary>
+        /// <param name="value">The value to parse.</param>
+        public Coordinate ParseCoordinate(string value)
+        {
+            string[] coordinates = value.Split(',');
+
+            if (coordinates.Count() > 0)
+            {
+                double x = 0.0;
+                double y = 0.0;
+                double z = 0.0;
+
+                _ = double.TryParse(coordinates[0], NumberStyles.Number, DefaultFormat, out x);
+                _ = double.TryParse(coordinates[1], NumberStyles.Number, DefaultFormat, out y);
+
+                Coordinate coordinate = new Coordinate(x, y);
+
+                if (coordinates.Length == 3)
+                {
+                    _ = double.TryParse(coordinates[2], NumberStyles.Number, DefaultFormat, out z);
+                    Coordinate coordinateZ = new CoordinateZ(x, y, z);
+                    return coordinateZ;
+                }
+                else
+                {
+                    return coordinate;
+                }
+            }
+            return new CoordinateZ(0, 0, 0);
+        }
+    }
+
+        /// <summary>
+        /// Converts a String to LineString.
+        /// </summary>
+        /// <param name="value">The value to parse.</param>
+        public NetTopologySuite.Geometries.LineString ParseLineString(string value)
+        {
+            string[] points = value.Split(' ');
+            if (points.Count() > 0)
+            {
+                var coordinates = points.Select(p => ParseCoordinate(p)).ToArray();
+
+                return new NetTopologySuite.Geometries.LineString(coordinates);
+            }
+            return null;
+        }
+
+        public void CheckAttributes(List<tBaseObject> IMXModel1, List<tBaseObject> IMXModel2)
         {
             //assumption object with puic in one model is not in second model
 
+            List<(tBaseObject, tBaseObject)> objectMatched = new List<(tBaseObject, tBaseObject)>();
+
+            foreach (tBaseObject baseObject in IMXModel1)
+            {
+                List<tBaseObject> filteredObjectsByType = IMXModel2.Where(x=>x.GetType().Name == baseObject.GetType().Name).ToList();
+                List<tBaseObject> filteredObjectsByName = filteredObjectsByType.Where(x=>x.name == baseObject.name).ToList();
+
+                if (filteredObjectsByName.Count > 0)
+                {
+                    objectMatched.Add((baseObject, filteredObjectsByName.First()));
+                    continue;
+                }
+                Type objectType = baseObject.GetType();
+                PropertyInfo typeProperty = objectType.GetProperty($"{Char.ToLowerInvariant(objectType.Name[0]) + objectType.Name.Substring(1)}Type");
+                if (typeProperty != null && filteredObjectsByName.Count == 0)
+                {
+                    List<tBaseObject> filteredByObjectSubType = filteredObjectsByType.Where(x => typeProperty.GetValue(x).ToString() == typeProperty.GetValue(baseObject).ToString()).ToList();
+
+                    if(filteredByObjectSubType.Count > 0)
+                    {
+                        objectMatched.Add((baseObject, filteredByObjectSubType.First()));
+                    }
+                }
+
+            }
         }
     }
 }
