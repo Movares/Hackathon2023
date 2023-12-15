@@ -69,9 +69,9 @@ namespace Hackathon2023
             ExploreIMXModel(project, ref firstProjectPuics, ref baseObjectsProject1);
             ExploreIMXModel(project2, ref secondProjectPuics, ref baseObjectsProject2);
 
-            var intersect = firstProjectPuics.Intersect(secondProjectPuics).ToList();
-            var except1 = firstProjectPuics.Except(secondProjectPuics).ToList();
-            var except2 = secondProjectPuics.Except(firstProjectPuics).ToList();
+            var intersect = firstProjectPuics.Intersect(secondProjectPuics).ToList(); // Correctly matched puics
+            var except1 = firstProjectPuics.Except(secondProjectPuics).ToList();      // Puics found in Project 1 but not in 2
+            var except2 = secondProjectPuics.Except(firstProjectPuics).ToList();      // Puics found in Project 2 but not in 1
 
             List<string> typeNamesProject1 = new List<string>();
             foreach(var p in intersect)
@@ -82,15 +82,28 @@ namespace Hackathon2023
 
             }
 
-            var myDictionary = except1
-    .GroupBy(o => baseObjectsProject1[o].GetType().Name);
+            //var myDictionary = except1.GroupBy(o => baseObjectsProject1[o].GetType().Name);
 
-            var exceptTypes1 = except1.Select(x => x.GetType().Name).ToHashSet();
+            var exceptTypes1 = except1.Select(x => baseObjectsProject1[x].GetType().Name).ToHashSet();
             var exceptTypes2 = except2.Select(x => baseObjectsProject2[x].GetType().Name).ToHashSet();
             int intersectCount = intersect.Count;
             var typesInXML = baseObjectsProject1.Select(x=>x.Value.GetType().Name).ToHashSet();
             var typesInXML2 = baseObjectsProject2.Select(x=>x.Value.GetType().Name).ToHashSet();
             HashSet<string> uniqueTypes = typeNamesProject1.ToHashSet();
+
+            var countPerTypeDict1 = new Dictionary<string, int>();
+            var countPerTypeDict2 = new Dictionary<string, int>();
+            foreach (string type in exceptTypes1.Union(exceptTypes2)) 
+            {
+                countPerTypeDict1[type] = baseObjectsProject1.Where(x => x.Value.GetType().Name == type && except1.Contains(x.Key)).Count();
+                countPerTypeDict2[type] = baseObjectsProject2.Where(x => x.Value.GetType().Name == type && except2.Contains(x.Key)).Count();
+            }
+
+            var matchingTypesDict = new Dictionary<string, int>();
+            foreach (string type in uniqueTypes)
+            {
+                matchingTypesDict[type] = baseObjectsProject1.Where(x => x.Value.GetType().Name == type && intersect.Contains(x.Key)).Count();
+            }
 
             //Assert
             Assert.IsNotNull(intersect);
