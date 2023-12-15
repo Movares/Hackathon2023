@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Hackathon2023
 {
     [TestClass]
-    internal class Opdracht1Tests
+    public class Opdracht1Tests
     {
         [TestMethod]
         public void CheckPuics()
