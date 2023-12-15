@@ -146,7 +146,7 @@ namespace Hackathon2023
             }
             return new CoordinateZ(0, 0, 0);
         }
-    }
+    
 
         /// <summary>
         /// Converts a String to LineString.
