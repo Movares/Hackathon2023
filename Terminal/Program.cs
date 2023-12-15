@@ -7,7 +7,7 @@ namespace Terminal {
 			string file2 = @"C:\Users\924890\source\repos\Hackathon2023\Uitlever IMX B.V500.xml";
 
 			string[] duplicatePuics = GetDuplicatePuics(file1, file2);
-			s
+
 			Console.WriteLine($"Duplicate puics: {duplicatePuics.Length}");
 
 			foreach (string puic in duplicatePuics) {

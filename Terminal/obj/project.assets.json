@@ -32,11 +32,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\924890\\Source\\Repos\\Hackathon2023\\Terminal\\Terminal.csproj",
+      "projectUniqueName": "C:\\Users\\924890\\source\\repos\\Hackathon2023\\Terminal\\Terminal.csproj",
       "projectName": "Terminal",
-      "projectPath": "C:\\Users\\924890\\Source\\Repos\\Hackathon2023\\Terminal\\Terminal.csproj",
+      "projectPath": "C:\\Users\\924890\\source\\repos\\Hackathon2023\\Terminal\\Terminal.csproj",
       "packagesPath": "C:\\Users\\924890\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\924890\\Source\\Repos\\Hackathon2023\\Terminal\\obj\\",
+      "outputPath": "C:\\Users\\924890\\source\\repos\\Hackathon2023\\Terminal\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\924890\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -53,8 +53,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\924890\\Source\\Repos\\Hackathon2023\\src\\Hackathon2023.csproj": {
-              "projectPath": "C:\\Users\\924890\\Source\\Repos\\Hackathon2023\\src\\Hackathon2023.csproj"
+            "C:\\Users\\924890\\source\\repos\\Hackathon2023\\src\\Hackathon2023.csproj": {
+              "projectPath": "C:\\Users\\924890\\source\\repos\\Hackathon2023\\src\\Hackathon2023.csproj"
             }
           }
         }
