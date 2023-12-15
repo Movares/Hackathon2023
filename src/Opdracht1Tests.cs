@@ -95,5 +95,11 @@ namespace Hackathon2023
             //Assert
             Assert.IsNotNull(intersect);
         }
+
+        public void CheckAttributes(Dictionary<string, tBaseObject> IMXModel1, Dictionary<string, tBaseObject> IMXModel2)
+        {
+            //assumption object with puic in one model is not in second model
+
+        }
     }
 }
