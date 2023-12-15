@@ -3,15 +3,6 @@ using IMX.V500;
 
 namespace Terminal {
 	public static class Solutions {
-		public static void ShowAll() {
-			string firstFile = @"C:\Users\924890\source\repos\Hackathon2023\Ontwerp IMX.V500.xml";
-			string secondFile = @"C:\Users\924890\source\repos\Hackathon2023\Uitlever IMX B.V500.xml";
-
-			ShowDuplicatePuics(firstFile, secondFile);
-			ShowDuplicates(firstFile, secondFile, IMXObjects.GetNonIMX, Compare.IsNonBaseObjectWithRefEqual);
-			ShowDuplicates(firstFile, secondFile, IMXObjects.Get, Compare.IsNonBaseWithoutRefEqual);
-		}
-
 		public static void ShowDuplicates(string firstFile, string secondFile, Func<ImSpoor, object[]> objectGetter, Func<object, object, bool> comparer) {
 			object[] firstObjects = objectGetter(ImxSerializer.ReadXml(firstFile)!);
 			object[] secondObjects = objectGetter(ImxSerializer.ReadXml(secondFile)!);
