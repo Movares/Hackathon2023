@@ -7,6 +7,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using NetTopologySuite.Geometries;
+
 
 namespace Hackathon2023
 {
@@ -112,8 +114,11 @@ namespace Hackathon2023
             CheckAttributes(filteredModel1, filteredModel2);
             //Assert
             Assert.IsNotNull(intersect);
+
+            CheckLocation(baseObjectsProject1, baseObjectsProject2);
         }
 
+        private CultureInfo DefaultFormat = CultureInfo.InvariantCulture;
         /// <summary>
         /// Converts a String to Coordinate.
         /// </summary>
@@ -193,6 +198,23 @@ namespace Hackathon2023
                 }
 
             }
+        }
+
+        public void CheckLocation(Dictionary<string, tBaseObject> IMXModel1, Dictionary<string, tBaseObject> IMXModel2)
+        {
+            List<Tuple<tBaseObject, tBaseObject>> matches;
+            foreach (KeyValuePair<string, tBaseObject> item in IMXModel1)
+            {
+                if (item.Value is tPointObject tPointObject)
+                {
+                    var location = tPointObject.Location.GeographicLocation;
+                }
+                else if (item.Value is tLineObject tLineObject)
+                {
+                    var location = tLineObject.Location.GeographicLocation.LineString;
+                }
+            }
+
         }
     }
 }
