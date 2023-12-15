@@ -12,6 +12,22 @@ using NetTopologySuite.Geometries;
 
 namespace Hackathon2023
 {
+
+    public class locationObjectPair
+    {
+        private tBaseObject _baseObject;
+        private Geometry _location;
+
+        public tBaseObject BaseObject { get => _baseObject;}
+        public Geometry Location { get => _location; }
+    
+        public locationObjectPair(tBaseObject value, Geometry location)
+        {
+            this._baseObject = value;
+            this._location = location;
+        }
+    }
+
     [TestClass]
     public class Opdracht1Tests
     {
@@ -210,21 +226,50 @@ namespace Hackathon2023
 
         }
 
-        public void CheckLocation(Dictionary<string, tBaseObject> IMXModel1, Dictionary<string, tBaseObject> IMXModel2)
+
+        public List<locationObjectPair> getLocationObjectPairList(Dictionary<string, tBaseObject> IMXModel)
         {
-            List<Tuple<tBaseObject, tBaseObject>> matches;
-            foreach (KeyValuePair<string, tBaseObject> item in IMXModel1)
+            List<locationObjectPair> locationPairedObjectsList = new List<locationObjectPair>();
+
+            foreach (KeyValuePair<string, tBaseObject> item in IMXModel)
             {
                 if (item.Value is tPointObject tPointObject)
                 {
-                    var location = tPointObject.Location.GeographicLocation;
+                    var location = new NetTopologySuite.Geometries.Point(ParseCoordinate(tPointObject.Location.GeographicLocation.Point.coordinates));
+                    locationPairedObjectsList.Add(new locationObjectPair(item.Value, location));
                 }
                 else if (item.Value is tLineObject tLineObject)
                 {
-                    var location = tLineObject.Location.GeographicLocation.LineString;
+                    var lineString = ParseLineString(tLineObject.Location.GeographicLocation.LineString.coordinates.ToString());
+                    locationPairedObjectsList.Add(new locationObjectPair(item.Value, lineString));
+
                 }
             }
 
+            return locationPairedObjectsList;
+        }
+
+        public (List<locationObjectPair>, List<locationObjectPair>) CheckLocation(Dictionary<string, tBaseObject> IMXModel1, Dictionary<string, tBaseObject> IMXModel2)
+        {
+
+            List<Tuple<tBaseObject, tBaseObject>> matches;
+            List<locationObjectPair> locationPairedObjects1 = getLocationObjectPairList(IMXModel1);
+            List<locationObjectPair> locationPairedObjects2 = getLocationObjectPairList(IMXModel2);
+
+            List<Coordinate> coordinates1 = new();
+            locationPairedObjects1.ForEach(x => coordinates1.AddRange(x.Location.Coordinates));
+            Envelope envelope1 = new Envelope(coordinates1);
+
+            List<Coordinate> coordinates2 = new();
+            locationPairedObjects1.ForEach(x => coordinates2.AddRange(x.Location.Coordinates));
+            Envelope envelope2 = new Envelope(coordinates2);
+
+            Envelope intersection = envelope1.Intersection(envelope2);
+            
+            List<locationObjectPair> filteredList1 = locationPairedObjects1.Where(x => intersection.Contains(x.Location.EnvelopeInternal)).ToList();
+            List<locationObjectPair> filteredList2 = locationPairedObjects2.Where(x => intersection.Contains(x.Location.EnvelopeInternal)).ToList();
+
+            return (filteredList1, filteredList2)
         }
     }
 }
