@@ -12,6 +12,10 @@ namespace Terminal {
 			return Get(imx).Where(obj => obj is not tBaseObject).ToArray();
 		}
 
+		public static object[] GetNonIMXNonRef(ImSpoor imx) {
+			return GetNonIMX(imx).Where(obj => !Compare.HasRef(obj)).ToArray();
+		}
+
 		public static tBaseObject[] GetBase(ImSpoor imx) {
 			return Get(imx).OfType<tBaseObject>().ToArray();
 		}

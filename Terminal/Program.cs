@@ -1,19 +1,20 @@
 ﻿using IMX.V500;
 using Hackathon2023;
-using System.Reflection;
 
 namespace Terminal {
 	internal class Program {
 		static void Main(string[] _) {
-			string file1 = @"C:\Users\924890\source\repos\Hackathon2023\Ontwerp IMX.V500.xml";
-			string file2 = @"C:\Users\924890\source\repos\Hackathon2023\Uitlever IMX B.V500.xml";
+			string firstFile = @"C:\Users\924890\source\repos\Hackathon2023\Ontwerp IMX.V500.xml";
+			string secondFile = @"C:\Users\924890\source\repos\Hackathon2023\Uitlever IMX B.V500.xml";
 
-			ShowDuplicateRefObjects(file1, file2);
+			ShowDuplicatePuics(firstFile, secondFile);
+			ShowDuplicates(firstFile, secondFile, IMXObjects.GetNonIMX, Compare.IsNonBaseObjectWithRefEqual);
+			ShowDuplicates(firstFile, secondFile, IMXObjects.GetNonIMXNonRef, Compare.IsNonBaseWithoutRefEqual);
 		}
 
-		static void ShowDuplicateRefObjects(string firstFile, string secondFile) {
-			object[] firstObjects = IMXObjects.GetNonIMX(ImxSerializer.ReadXml(firstFile)!);
-			object[] secondObjects = IMXObjects.GetNonIMX(ImxSerializer.ReadXml(secondFile)!);
+		static void ShowDuplicates(string firstFile, string secondFile, Func<ImSpoor, object[]> objectGetter, Func<object, object, bool> comparer) {
+			object[] firstObjects = objectGetter(ImxSerializer.ReadXml(firstFile)!);
+			object[] secondObjects = objectGetter(ImxSerializer.ReadXml(secondFile)!);
 
 			Console.WriteLine($"Objects in first file: {firstObjects.Length}");
 
@@ -27,7 +28,7 @@ namespace Terminal {
 				Console.WriteLine($"\t{groups.Key.Name}: {groups.Count()}");
 			}
 
-			object[] duplicates = firstObjects.Where(firstObject => secondObjects.Any(secondObject => Compare.IsEqual(firstObject, secondObject))).ToArray();
+			object[] duplicates = firstObjects.Where(firstObject => secondObjects.Any(secondObject => comparer(firstObject, secondObject))).ToArray();
 
 			Console.WriteLine($"Duplicate objects: {duplicates.Length}");
 
@@ -36,6 +37,7 @@ namespace Terminal {
 			}
 
 			Console.ReadKey();
+
 		}
 
 		static void ShowDuplicatePuics(string firstFile, string secondFile) {

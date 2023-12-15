@@ -28,7 +28,7 @@ namespace Terminal {
 				return IsBaseObjectEqual(firstAsBase, secondAsBase);
 			}
 
-			if (keys.ContainsKey(type)) {
+			if (HasRef(first)) {
 				return IsNonBaseObjectWithRefEqual(first, second);
 			}
 
@@ -36,16 +36,20 @@ namespace Terminal {
 
 		}
 
+		public static bool HasRef(object obj) {
+			return keys.ContainsKey(obj.GetType());
+		}
+
 		public static bool IsBaseObjectEqual(tBaseObject first, tBaseObject second) {
 			return first.puic == second.puic;
 		}
 
 		public static bool IsNonBaseObjectWithRefEqual(object first, object second) {
-			return keys[first.GetType()].All(prop => prop.GetValue(first)!.Equals(prop.GetValue(second)!));
+			return first.GetType() == second.GetType() && keys[first.GetType()].All(prop => prop.GetValue(first)!.Equals(prop.GetValue(second)!));
 		}
 
 		public static bool IsNonBaseWithoutRefEqual(object first, object second) {
-			return first.GetType().GetProperties().All(prop => prop.GetValue(first, null)!.Equals(prop.GetValue(second, null)!));
+			return first.GetType() == second.GetType() && first.GetType().GetProperties().All(prop => prop.GetValue(first, null)!.Equals(prop.GetValue(second, null)!));
 		}
 	}
 }
