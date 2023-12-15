@@ -9,7 +9,7 @@ namespace Terminal {
 
 			ShowDuplicatePuics(firstFile, secondFile);
 			ShowDuplicates(firstFile, secondFile, IMXObjects.GetNonIMX, Compare.IsNonBaseObjectWithRefEqual);
-			ShowDuplicates(firstFile, secondFile, IMXObjects.GetNonIMXNonRef, Compare.IsNonBaseWithoutRefEqual);
+			ShowDuplicates(firstFile, secondFile, IMXObjects.Get, Compare.IsNonBaseWithoutRefEqual);
 		}
 
 		public static void ShowDuplicates(string firstFile, string secondFile, Func<ImSpoor, object[]> objectGetter, Func<object, object, bool> comparer) {
@@ -36,8 +36,8 @@ namespace Terminal {
 				Console.WriteLine($"\t{groups.Key.Name}: {groups.Count()}");
 			}
 
+			Console.WriteLine();
 			Console.ReadKey();
-
 		}
 
 		public static void ShowDuplicatePuics(string firstFile, string secondFile) {

@@ -1,5 +1,6 @@
 ﻿using IMX.V500;
 using System.Reflection;
+using System.Globalization;
 
 namespace Terminal {
 	public static class Compare {
@@ -49,7 +50,48 @@ namespace Terminal {
 		}
 
 		public static bool IsNonBaseWithoutRefEqual(object first, object second) {
-			return first.GetType() == second.GetType() && first.GetType().GetProperties().All(prop => prop.GetValue(first, null)!.Equals(prop.GetValue(second, null)!));
+			const double tolerance = 2.0;
+			Type type = first.GetType();
+
+			if (type != second.GetType()) {
+				return false;
+			}
+
+			PropertyInfo? atMeasureProperty = type.GetProperty("atMeasure");
+
+			if (atMeasureProperty != null && atMeasureProperty.PropertyType == typeof(double)) {
+				return Math.Abs(((double)atMeasureProperty.GetValue(first)! - (double)atMeasureProperty.GetValue(second)!)) < tolerance;
+			}
+
+			PropertyInfo? pointProperty = type.GetProperties().FirstOrDefault(prop => prop.PropertyType.IsSubclassOf(typeof(tPoint)));
+
+			if (pointProperty != null) {
+				tPoint p = (tPoint)pointProperty.GetValue(first)!;
+				tPoint q = (tPoint)pointProperty.GetValue(second)!;
+
+				(double, double, double) pPoints = Points(p.Point);
+				(double, double, double) qPoints = Points(q.Point);
+
+				double distance = Math.Sqrt(
+					pPoints.Item1 * qPoints.Item1 +
+					pPoints.Item2 * qPoints.Item2 +
+					pPoints.Item3 * qPoints.Item3
+				);
+
+				return distance < tolerance;
+			}
+
+			return first.GetType().GetProperties().All(prop => prop.GetValue(first, null)?.Equals(prop.GetValue(second, null)) ?? false);
+		}
+
+		private static (double, double, double) Points(Point point) {
+			string[] values = point.coordinates.Split(',');
+
+			return (
+				double.Parse(values[0], CultureInfo.InvariantCulture),
+				double.Parse(values[1], CultureInfo.InvariantCulture),
+				double.Parse(values[2], CultureInfo.InvariantCulture)
+			);
 		}
 	}
 }
