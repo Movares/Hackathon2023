@@ -59,7 +59,12 @@ namespace Terminal {
 				[typeof(FlankProtectionConfiguration)] = new List<PropertyInfo> {
 					typeof(FlankProtectionConfiguration).GetProperty("switchMechanismRef")!,
 					typeof(FlankProtectionConfiguration).GetProperty("position")!,
-				}
+				},
+				[typeof(ErtmsBaliseGroup)] = new List<PropertyInfo> { typeof(MicroNode).GetProperty("baliseGroupRef")! },
+				[typeof(ErtmsLevelCrossing)] = new List<PropertyInfo> { typeof(MicroNode).GetProperty("levelCrossingRef")! },
+				[typeof(ErtmsRoute)] = new List<PropertyInfo> { typeof(MicroNode).GetProperty("routeRef")! },
+				[typeof(ErtmsSignal)] = new List<PropertyInfo> { typeof(MicroNode).GetProperty("signalRef")! },
+				[typeof(EuroBalise)] = new List<PropertyInfo> { typeof(MicroNode).GetProperty("baliseRef")! },
 			};
 
 			Type type = first.GetType();
