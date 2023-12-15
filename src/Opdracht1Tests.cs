@@ -174,30 +174,40 @@ namespace Hackathon2023
             //assumption object with puic in one model is not in second model
 
             List<(tBaseObject, tBaseObject)> objectMatched = new List<(tBaseObject, tBaseObject)>();
-
+            List<tBaseObject> Model1NotMatched = new List<tBaseObject>();
             foreach (tBaseObject baseObject in IMXModel1)
             {
+                Type objectType = baseObject.GetType();
+
+                PropertyInfo typeProperty = objectType.GetProperty($"{Char.ToLowerInvariant(objectType.Name[0]) + objectType.Name.Substring(1)}Type");
                 List<tBaseObject> filteredObjectsByType = IMXModel2.Where(x=>x.GetType().Name == baseObject.GetType().Name).ToList();
                 List<tBaseObject> filteredObjectsByName = filteredObjectsByType.Where(x=>x.name == baseObject.name).ToList();
 
                 if (filteredObjectsByName.Count > 0)
                 {
-                    objectMatched.Add((baseObject, filteredObjectsByName.First()));
-                    continue;
-                }
-                Type objectType = baseObject.GetType();
-                PropertyInfo typeProperty = objectType.GetProperty($"{Char.ToLowerInvariant(objectType.Name[0]) + objectType.Name.Substring(1)}Type");
-                if (typeProperty != null && filteredObjectsByName.Count == 0)
-                {
-                    List<tBaseObject> filteredByObjectSubType = filteredObjectsByType.Where(x => typeProperty.GetValue(x).ToString() == typeProperty.GetValue(baseObject).ToString()).ToList();
-
-                    if(filteredByObjectSubType.Count > 0)
+                    if (typeProperty != null)
                     {
-                        objectMatched.Add((baseObject, filteredByObjectSubType.First()));
+                        List<tBaseObject> filteredByObjectSubType = filteredObjectsByName.Where(x => typeProperty.GetValue(x).ToString() == typeProperty.GetValue(baseObject).ToString()).ToList();
+
+                        if (filteredByObjectSubType.Count > 0)
+                        {
+                            objectMatched.Add((baseObject, filteredByObjectSubType.First()));
+                            continue;
+                        }
                     }
-                }
+                    else  
+                    {
+                        objectMatched.Add((baseObject, filteredObjectsByName.First()));
+                        continue;
+                    }
+                }             
+                
+                Model1NotMatched.Add(baseObject);
 
             }
+
+            
+
         }
 
         public void CheckLocation(Dictionary<string, tBaseObject> IMXModel1, Dictionary<string, tBaseObject> IMXModel2)
