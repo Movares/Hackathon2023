@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "Terminal/1.0.0": {
+        "dependencies": {
+          "Hackathon2023": "1.0.0"
+        },
+        "runtime": {
+          "Terminal.dll": {}
+        }
+      },
+      "Hackathon2023/1.0.0": {
+        "runtime": {
+          "Hackathon2023.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Terminal/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Hackathon2023/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

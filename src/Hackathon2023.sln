@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hackathon2023", "Hackathon2023.csproj", "{F99099AE-A8B2-48B8-9A1E-FCD2416B7089}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hackathon2023", "Hackathon2023.csproj", "{F99099AE-A8B2-48B8-9A1E-FCD2416B7089}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Terminal", "..\Terminal\Terminal.csproj", "{346D2791-A364-416C-8CF0-FDC1C9D5316B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{F99099AE-A8B2-48B8-9A1E-FCD2416B7089}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F99099AE-A8B2-48B8-9A1E-FCD2416B7089}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F99099AE-A8B2-48B8-9A1E-FCD2416B7089}.Release|Any CPU.Build.0 = Release|Any CPU
+		{346D2791-A364-416C-8CF0-FDC1C9D5316B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{346D2791-A364-416C-8CF0-FDC1C9D5316B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{346D2791-A364-416C-8CF0-FDC1C9D5316B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{346D2791-A364-416C-8CF0-FDC1C9D5316B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
