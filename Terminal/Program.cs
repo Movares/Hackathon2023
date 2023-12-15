@@ -8,28 +8,37 @@ namespace Terminal {
 			string file1 = @"C:\Users\924890\source\repos\Hackathon2023\Ontwerp IMX.V500.xml";
 			string file2 = @"C:\Users\924890\source\repos\Hackathon2023\Uitlever IMX B.V500.xml";
 
-			object[] firstObjects = IMXObjects.GetNonIMX(ImxSerializer.ReadXml(file1)!);
-			object[] secondObjects = IMXObjects.GetNonIMX(ImxSerializer.ReadXml(file2)!);
+			ShowDuplicateRefObjects(file1, file2);
+		}
+
+		static void ShowDuplicateRefObjects(string firstFile, string secondFile) {
+			object[] firstObjects = IMXObjects.GetNonIMX(ImxSerializer.ReadXml(firstFile)!);
+			object[] secondObjects = IMXObjects.GetNonIMX(ImxSerializer.ReadXml(secondFile)!);
 
 			Console.WriteLine($"Objects in first file: {firstObjects.Length}");
-			Console.WriteLine($"Objects in second file: {secondObjects.Length}");
 
-			List<object> duplicates = new();
-
-			foreach (object obj in firstObjects) {
-				if (secondObjects.Any(o => CompareIMXObject(obj, o))) {
-					duplicates.Add(obj);
-				}
+			foreach (IGrouping<Type, object> groups in firstObjects.GroupBy(x => x.GetType())) {
+				Console.WriteLine($"\t{groups.Key.Name}: {groups.Count()}");
 			}
 
-			Console.WriteLine($"Duplicate objects: {duplicates.Count}");
+			Console.WriteLine($"Objects in second file: {secondObjects.Length}");
+
+			foreach (IGrouping<Type, object> groups in secondObjects.GroupBy(x => x.GetType())) {
+				Console.WriteLine($"\t{groups.Key.Name}: {groups.Count()}");
+			}
+
+			object[] duplicates = firstObjects.Where(firstObject => secondObjects.Any(secondObject => Compare.IsEqual(firstObject, secondObject))).ToArray();
+
+			Console.WriteLine($"Duplicate objects: {duplicates.Length}");
+
+			foreach (IGrouping<Type, object> groups in duplicates.GroupBy(x => x.GetType())) {
+				Console.WriteLine($"\t{groups.Key.Name}: {groups.Count()}");
+			}
+
 			Console.ReadKey();
 		}
 
 		static void ShowDuplicatePuics(string firstFile, string secondFile) {
-			firstFile ??= @"C:\Users\924890\source\repos\Hackathon2023\Ontwerp IMX.V500.xml";
-			secondFile ??= @"C:\Users\924890\source\repos\Hackathon2023\Uitlever IMX B.V500.xml";
-
 			string[] duplicatePuics = GetDuplicatePuics(firstFile, secondFile);
 
 			foreach (string puic in duplicatePuics) {
@@ -50,34 +59,6 @@ namespace Terminal {
 				.Where(x => x.Count() > 1)
 				.Select(x => x.Key)
 				.ToArray();
-		}
-
-		static bool CompareIMXObject(object first, object second) {
-			Dictionary<Type, List<PropertyInfo>> keys = new Dictionary<Type, List<PropertyInfo>> {
-				[typeof(MicroNode)] = new List<PropertyInfo> { typeof(MicroNode).GetProperty("junctionRef")! },
-				[typeof(MicroLink)] = new List<PropertyInfo> { typeof(MicroLink).GetProperty("implementationObjectRef")! },
-				[typeof(FlankProtectionConfiguration)] = new List<PropertyInfo> {
-					typeof(FlankProtectionConfiguration).GetProperty("switchMechanismRef")!,
-					typeof(FlankProtectionConfiguration).GetProperty("position")!,
-				},
-				[typeof(ErtmsBaliseGroup)] = new List<PropertyInfo> { typeof(MicroNode).GetProperty("baliseGroupRef")! },
-				[typeof(ErtmsLevelCrossing)] = new List<PropertyInfo> { typeof(MicroNode).GetProperty("levelCrossingRef")! },
-				[typeof(ErtmsRoute)] = new List<PropertyInfo> { typeof(MicroNode).GetProperty("routeRef")! },
-				[typeof(ErtmsSignal)] = new List<PropertyInfo> { typeof(MicroNode).GetProperty("signalRef")! },
-				[typeof(EuroBalise)] = new List<PropertyInfo> { typeof(MicroNode).GetProperty("baliseRef")! },
-			};
-
-			Type type = first.GetType();
-
-			if (type != second.GetType()) {
-				return false;
-			}
-
-			if (first is tBaseObject firstAsBase && second is tBaseObject secondAsBase) {
-				return firstAsBase.puic == secondAsBase.puic;
-			}
-
-			return keys[type].All(prop => prop.GetValue(first)!.Equals(prop.GetValue(second)!));
 		}
 	}
 }
