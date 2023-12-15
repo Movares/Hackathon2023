@@ -3,7 +3,7 @@ using IMX.V500;
 
 namespace Terminal {
 	public static class Solutions {
-		static void ShowAll(string[] _) {
+		public static void ShowAll() {
 			string firstFile = @"C:\Users\924890\source\repos\Hackathon2023\Ontwerp IMX.V500.xml";
 			string secondFile = @"C:\Users\924890\source\repos\Hackathon2023\Uitlever IMX B.V500.xml";
 
@@ -12,7 +12,7 @@ namespace Terminal {
 			ShowDuplicates(firstFile, secondFile, IMXObjects.GetNonIMXNonRef, Compare.IsNonBaseWithoutRefEqual);
 		}
 
-		static void ShowDuplicates(string firstFile, string secondFile, Func<ImSpoor, object[]> objectGetter, Func<object, object, bool> comparer) {
+		public static void ShowDuplicates(string firstFile, string secondFile, Func<ImSpoor, object[]> objectGetter, Func<object, object, bool> comparer) {
 			object[] firstObjects = objectGetter(ImxSerializer.ReadXml(firstFile)!);
 			object[] secondObjects = objectGetter(ImxSerializer.ReadXml(secondFile)!);
 
@@ -40,7 +40,7 @@ namespace Terminal {
 
 		}
 
-		static void ShowDuplicatePuics(string firstFile, string secondFile) {
+		public static void ShowDuplicatePuics(string firstFile, string secondFile) {
 			string[] duplicatePuics = GetDuplicatePuics(firstFile, secondFile);
 
 			foreach (string puic in duplicatePuics) {
@@ -51,7 +51,7 @@ namespace Terminal {
 			Console.ReadKey();
 		}
 
-		static string[] GetDuplicatePuics(string firstFile, string secondFile) {
+		public static string[] GetDuplicatePuics(string firstFile, string secondFile) {
 			ImSpoor firstModel = ImxSerializer.ReadXml(firstFile)!;
 			ImSpoor secondModel = ImxSerializer.ReadXml(secondFile)!;
 
